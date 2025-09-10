@@ -1,0 +1,632 @@
+The guide outlines web3 basics, Solana advantages, prerequisites, and learning approach with hands-on labs.
+
+What the page covers ￼
+ 1. Web3 fundamentals
+• Explains how web3 lets users transact directly, own their accounts, and custody digital assets without intermediaries.
+• Lists real-world uses such as low-fee online sales, authentic digital/physical items, and instant global payments.
+ 2. Solana’s value proposition
+• Highlights Solana’s one-to-two-second finality, sub-penny fees (~$0.00025), and high decentralization (strong Nakamoto coefficient).
+• Emphasizes that many web3 use cases are only practical on Solana because of its speed and cost profile.
+ 3. Prerequisites for new developers
+• No prior blockchain or Rust experience required.
+• Need a Mac, Linux, or Windows PC (Windows users should set up Windows Terminal + WSL2).
+• Install Node.js 20 (inside WSL2 on Windows).
+• Have basic TypeScript skills, command-line familiarity, and git experience.
+ 4. Course structure
+• Each lesson has an Overview (read-only), a Lab (code-along project), and a Challenge (independent mini-project).
+• The course is self-paced and encourages repetition and external research when concepts aren’t clear.
+
+Actions it asks of a beginner ￼
+ • Set up the development environment: OS, WSL2 (if on Windows), Node.js 20, TypeScript tooling, and git.
+ • Work through every Lab and Challenge rather than just reading the overviews.
+ • Be “brutally honest” about your understanding—repeat lessons or research externally when something isn’t clear.
+ • Extend the projects creatively (“go above and beyond”) after finishing the prescribed tasks to deepen mastery.
+
+================================================================================================================================================================
+
+Learn Solana cryptography basics and generate, store, and load wallet keypairs securely with web3.js.
+
+Summary ￼
+
+This lesson introduces symmetric vs asymmetric cryptography and shows how Solana uses public key cryptography for addresses and authority. It then teaches how to create and securely manage keypairs in JavaScript using @solana/web3.js, and how to load existing keys from a .env file (or filesystem) with @solana-developers/helpers. A short lab walks you through generating a keypair, printing keys, and securely loading a secret key from environment variables.
+
+What it teaches (bullet points) ￼
+ • Cryptography basics: Difference between symmetric (same key to encrypt/decrypt; e.g., AES, Chacha20) and asymmetric cryptography (keypairs; supports encryption, signatures, and key exchange; common families: ECC, RSA).
+ • Real-world uses of asymmetric crypto: Cards signing transactions, website TLS, e-passports, secure messaging. • Solana addresses and authority: Public keys are on-chain addresses; possession of a secret key grants control over tokens and authority on that address.
+ • Security practice: Never commit secret keys; store only the secret key (not full keypair) and regenerate the keypair from it; put secrets in a .env file and gitignore it.
+ • Web3.js keypair generation: Use Keypair.generate() and read publicKey.toBase58() and secretKey.
+ • Loading existing keys safely: Use @solana-developers/helpers:
+ ▫ getKeypairFromEnvironment() for .env
+ ▫ getKeypairFromFile() for Solana CLI key files
+ • Hands-on lab workflow: Initialize a TypeScript project, install web3.js and helpers, generate a keypair, print the keys, then move the secret key into .env and reload it securely.
+
+Actions it asks you to take (for a new Solana dev) ￼
+ • Set up a project:
+ ▫ Make a new directory and initialize npm.
+ ▫ Install dependencies: typescript, @solana/web3.js@1, esrun, @solana-developers/helpers@2.
+ • Generate a keypair:
+ ▫ Create generate-keypair.ts that calls Keypair.generate().
+ ▫ Run with npx esrun to confirm it generates and logs.
+ • Inspect keys:
+ ▫ Log keypair.publicKey.toBase58() and keypair.secretKey to see both values locally.
+ • Secure your secret key:
+ ▫ Create a .env file with SECRET_KEY set to the array of numbers you printed.
+ ▫ Add .env to .gitignore so it’s never committed.
+ • Load keys from environment:
+ ▫ Update your script to import “dotenv/config” and use getKeypairFromEnvironment(“SECRET_KEY”).
+ ▫ Run again to confirm it loads securely without printing or hardcoding secrets.
+ • Be ready for next steps:
+ ▫ Keep this keypair to send tokens, NFTs, or read/write data on Solana in later lessons
+================================================================================================================================================================
+
+Read Data From The Solana Networkork
+
+Summary ￼
+ • What this page is about: How to read on-chain data from Solana using @solana/web3.js, focusing on accounts, SOL/lamports, addresses, connecting to a cluster (Devnet), configuring TypeScript, and writing a script to fetch an account’s balance.
+ • Why it matters: Reading balances is the foundational skill for interacting with Solana programs and tokens, and Devnet lets you practice safely with free SOL.
+
+What it teaches ￼
+ • Accounts: All data lives in accounts (SOL, tokens, NFTs, programs, and program data).
+ • SOL and Lamports: SOL is the native token; 1 SOL = 1,000,000,000 lamports. Use LAMPORTS_PER_SOL to convert for display.
+ • Addresses/Public Keys: Most addresses are public keys; whoever controls the secret key controls the account.
+ • Tooling (@solana/web3.js): Use the Connection object to talk to a cluster (Devnet in this lesson).
+ • TypeScript setup: tsconfig with ES2022 modules/top-level await for smooth execution.
+ • Reading data (balances): Create a Connection, construct a PublicKey, call connection.getBalance, and format the result in SOL.
+
+Actions it asks you to take (step-by-step) ￼
+ • Install dependencies:
+ ▫ Run: npm install typescript @solana/web3.js@1 esrun
+ • Connect to Devnet:
+ ▫ Create a script that imports Connection and clusterApiUrl and logs “Connected!” after creating new Connection(clusterApiUrl(“devnet”)).
+ • Update TypeScript config:
+ ▫ Add a tsconfig.json with ES2022 target/module, node16 resolution, top-level await support, and include [“src”].
+ • Read an account balance:
+ ▫ Write a script that:
+ ⁃ Imports Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL.
+ ⁃ Creates a Connection to Devnet.
+ ⁃ Uses a known public key.
+ ⁃ Calls getBalance, converts to SOL, and logs the result.
+ ▫ Run with: npx esrun your-file.ts
+ • Lab — check your wallet:
+ ▫ Create check-balance.ts that loads your public key, connects to https://api.devnet.solana.com with commitment “confirmed”, fetches balance, converts to SOL, and logs it.
+ • Get Devnet SOL (faucet):
+ ▫ Visit the Devnet faucet linked on the page, fund your public key with any amount of SOL, then rerun your script to see the updated balance.
+ • Check other balances (CLI arg):
+ ▫ Modify the script to accept a public key from process.argv[2], validate presence, fetch balance, and log it.
+ ▫ Use classmates’ addresses to test.
+ • Challenge extensions:
+ ▫ Add input validation to handle invalid wallet addresses gracefully.
+ ▫ Switch to Mainnet and look up well-known Solana addresses (e.g., toly.sol, shaq.sol, mccann.sol).
+
+================================================================================================================================================================
+
+Create Transactions on the Solana Network
+
+Summary ￼
+ • Core idea: All onchain state changes on Solana happen through atomic transactions composed of one or more instructions.
+ • Instructions: Each instruction specifies accounts to read/write, the program to invoke, and byte-array data. Parallelism comes from touching different accounts.
+ • Creating transactions: Use @solana/web3.js to build a Transaction, add a SystemProgram.transfer instruction, then send with sendAndConfirmTransaction.
+ • Fees: The first signer pays a deterministic fee; if the signer lacks SOL, the transaction is dropped. Use devnet airdrops for testing.
+ • Explorer: You can view transaction details (block, fees, timing) on Solana Explorer, set to Devnet.
+ • Lab: Build a transfer.ts script that sends SOL to a provided public key on Devnet.
+ • Challenge: Measure fees and timing, find the tx on Explorer (Devnet), and reflect on what “confirmed” means.
+
+What it teaches (bullet points) ￼
+ • Atomicity: A transaction either fully succeeds or fails—no partial state changes.
+ • Instruction structure: Accounts array, program ID, and data payload; this design enables high throughput when accounts don’t overlap.
+ • Using web3.js:
+ ▫ Create a transaction: new Transaction().
+ ▫ Build a transfer instruction: SystemProgram.transfer({ fromPubkey, toPubkey, lamports }).
+ ▫ Send and confirm: sendAndConfirmTransaction(connection, transaction, [signers]).
+ • Fee mechanics: First signer pays; insufficient funds cause a simulation/debit error. Use airdrop on Devnet/local for funding.
+ • Dev tooling:
+ ▫ Helpers: getKeypairFromEnvironment to load your keypair from SECRET_KEY in .env.
+ ▫ Devnet connection: new Connection(“https://api.devnet.solana.com”, “confirmed”).
+ ▫ Airdrops: airdropIfRequired(…) in code or solana airdrop 1 via CLI.
+ ▫ Explorer usage: verify tx by signature, inspect block, fee, timestamp.
+
+Actions it asks you to take (for someone starting Solana dev) ￼
+ • Set up environment
+ ▫ Ensure you have a .env with SECRET_KEY and install dependencies: @solana/web3.js and @solana-developers/helpers.
+ ▫ Connect to Devnet with commitment “confirmed”.
+ • Fund your signer for Devnet
+ ▫ Use code snippet airdropIfRequired(…, 1 SOL, 0.5 SOL threshold) to auto-airdrop in dev/local, or run solana airdrop 1.
+ • Create the transfer script
+ ▫ Create transfer.ts that:
+ ⁃ Loads your keypair from SECRET_KEY.
+ ⁃ Reads a destination public key from the command line.
+ ⁃ Builds a Transaction and adds SystemProgram.transfer with a lamports amount (e.g., 5,000).
+ ⁃ Sends with sendAndConfirmTransaction(connection, transaction, [senderKeypair]) and logs the signature.
+ • Run and verify
+ ▫ Execute: npx esrun transfer.ts <destination_wallet_address>.
+ ▫ Copy the returned signature and look it up on Solana Explorer set to Devnet to view details (block, fee, timing).
+ • Complete the challenge
+ ▫ Determine the transaction fee in SOL and convert to USD (using current SOL price externally).
+ ▫ Find your transaction on Explorer (Devnet).
+ ▫ Measure how long the transfer took.
+ ▫ Explain what “confirmed” means in the context of Solana’s commitment levels.
+ 
+================================================================================================================================================================
+
+Using custom onchain programs
+
+Summary ￼
+ • Purpose: Introduces how to call custom onchain programs on Solana by manually building instructions, adding them to a transaction, and sending it.
+ • Core Idea: Use ‎`TransactionInstruction` with the correct ‎`programId`, required ‎`keys` (accounts), and optional ‎`data` to interact with non-System programs.
+ • Hands-on Focus: Build a client that pings a deployed “ping counter” program on Devnet, then inspect the transaction in Solana Explorer.
+ • Outcome: You’ll understand how programs use separate data accounts, how to structure instructions, and how to verify results on Explorer.
+
+What it teaches ￼
+ • TransactionInstruction basics:
+ ▫ Fields: ‎`programId`, ‎`keys` (with ‎`pubkey`, ‎`isSigner`, ‎`isWritable`), optional ‎`data`.
+ ▫ How to add an instruction to a ‎`Transaction` and send it with ‎`sendAndConfirmTransaction`.
+ • Account model for programs:
+ ▫ Programs and their state live in separate accounts; you must pass all required accounts in ‎`keys`.
+ • Working example (Ping program on Devnet):
+ ▫ Program address: ‎`ChT1B39WKLS8qUrkLvFDXMhEJ4F1XZzwUNHUt4AU9aVa`.
+ ▫ Data account: ‎`Ah9K7dQ8EHaZqcAsgBW8w37yN2eAy3koFmUn4x3CJtod`.
+ ▫ Instruction only needs the writable data account; no ‎`data` payload for this example.
+ • Tooling and setup:
+ ▫ Use ‎`@solana/web3.js` and ‎`@solana-developers/helpers` to connect to Devnet and airdrop if needed.
+ ▫ Load a payer keypair via environment (‎`SECRET_KEY`).
+ • Verification on Solana Explorer:
+ ▫ How to use the transaction signature to inspect fees, logs, accounts, and instruction details.
+
+Actions it asks you to take ￼
+ • Set up the script:
+ ▫ Create ‎`send-ping-transaction.ts`, import ‎`@solana/web3.js`, configure Devnet connection, load payer from ‎`.env`, and airdrop if required.
+ • Prepare program constants:
+ ▫ Define ‎`PING_PROGRAM_ADDRESS` and ‎`PING_PROGRAM_DATA_ADDRESS`.
+ ▫ Construct ‎`PublicKey` instances for both.
+ • Build and send the instruction:
+ ▫ Create ‎`TransactionInstruction` with:
+ ⁃ ‎`programId` = ping program public key.
+ ⁃ ‎`keys` = one entry for the data account (‎`isSigner: false`, ‎`isWritable: true`).
+ ⁃ No ‎`data` buffer for this example.
+ ▫ Add to a ‎`Transaction`, then call ‎`sendAndConfirmTransaction(connection, transaction, [payer])`.
+ • Inspect the result:
+ ▫ Log the signature and open it on Devnet Explorer.
+ ▫ Review Account Inputs, the single Instruction, and Program Logs (counter increments).
+ ▫ Optionally log a direct Explorer URL for convenience.
+
+For someone starting Solana dev ￼
+ • Mental model: You don’t just “call a function”—you build an instruction describing which program runs and which accounts it can read/write, optionally with serialized ‎`data`.
+ • Minimum viable interaction: With a payer and a program’s required accounts, you can construct and send a transaction without custom ‎`data`.
+ • Debugging workflow: Always validate on Solana Explorer; check which accounts were passed, fees, and logs to understand program behavior.
+
+Lab (kept separate) ￼
+ • Challenge: Write a script that transfers SOL from one account to another on Devnet.
+ • Requirements:
+ ▫ Load a payer keypair (sender) and specify a recipient.
+ ▫ Build a transfer instruction (System Program) and send the transaction.
+ ▫ Print the transaction signature and view it on Devnet Explorer.
+ • Hint from earlier lessons: Use ‎`SystemProgram.transfer()` or manually construct a ‎`TransactionInstruction` targeting the System Program, and reuse the scaffolding pattern shown above.
+
+================================================================================================================================================================
+
+Interact With Wallets
+
+What this page is about
+ • Introduces Solana wallets (hardware/software), why secrets must stay in wallets, and how dApps interact with wallets to read public keys and request transaction signatures.
+ • Teaches how to add wallet connectivity to a React/Next.js Solana app using Solana’s Wallet Adapter, including providers, hooks, and UI components.
+ • Shows how to access account info (e.g., SOL balance) after connection and how to construct and send transactions for wallet approval.
+ • Provides a step-by-step lab to build a simple frontend that pings a program, plus a challenge to build a “Send SOL” app.
+
+What it teaches (key takeaways)
+ • Wallet basics:
+ ▫ A wallet securely stores the secret key; apps should never ask users for secret keys.
+ ▫ Apps interact with wallets to get the public key and request transaction signatures.
+ • Solana Wallet Adapter overview:
+ ▫ Core: @solana/wallet-adapter-base.
+ ▫ React integration: @solana/wallet-adapter-react.
+ ▫ UI components: @solana/wallet-adapter-react-ui.
+ ▫ Most Solana wallets work out-of-the-box via the Wallet Standard; specific adapters are usually unnecessary.
+ • Install for React:
+ ▫ npm install @solana/wallet-adapter-base @solana/wallet-adapter-react @solana/wallet-adapter-react-ui.
+ • App scaffolding:
+ ▫ Wrap your app with ConnectionProvider (endpoint via clusterApiUrl) and WalletProvider (wallets array, often empty).
+ ▫ Use WalletModalProvider and WalletMultiButton to handle connecting, selecting, and disconnecting wallets.
+ • Hooks and state:
+ ▫ useConnection gives a Connection.
+ ▫ useWallet gives WalletContextState (publicKey, sendTransaction, connect/disconnect, etc.).
+ • Reading account data:
+ ▫ Check publicKey, then fetch account info and balance.
+ ▫ Use connection.onAccountChange to reactively update balance after confirmations.
+ • Sending transactions:
+ ▫ Build a Transaction and add instructions (e.g., SystemProgram.transfer).
+ ▫ Call sendTransaction(transaction, connection) to trigger wallet approval and submit to the network.
+
+Actions it asks you to take (for someone starting Solana dev)
+ • Install the wallet-adapter packages for React and set up providers (ConnectionProvider, WalletProvider) using clusterApiUrl(‘devnet’).
+ • Use WalletModalProvider and WalletMultiButton to give users a polished connect/disconnect UX.
+ • Use useWallet/useConnection to:
+ ▫ Read the connected wallet’s public key.
+ ▫ Listen for and display balance updates.
+ ▫ Construct and send transactions for wallet approval.
+ • Prefer Wallet Standard-compatible wallets; avoid handling secret keys in your app code.
+
+Lab (kept separate)
+ • Goal: Build a frontend that connects a wallet and “pings” a program:
+ ▫ Program ID: ChT1B39WKLS8qUrkLvFDXMhEJ4F1XZzwUNHUt4AU9aVa
+ ▫ Data account: Ah9K7dQ8EHaZqcAsgBW8w37yN2eAy3koFmUn4x3CJtod
+ • Steps:
+ ▫ Download and set up a Solana wallet (e.g., Phantom/Solfare/Backpack) and switch it to Devnet/Testnet mode.
+ ▫ Download the provided Next.js starter code.
+ ▫ Create a WalletContextProvider component:
+ ⁃ Wrap with ConnectionProvider (endpoint = clusterApiUrl(‘devnet’)), WalletProvider (wallets = []), and WalletModalProvider.
+ ⁃ Include @solana/wallet-adapter-react-ui/styles.css for UI styling.
+ ▫ Wrap the app (pages/index.tsx) with WalletContextProvider.
+ ▫ Replace the placeholder “Connect” button with WalletMultiButton in AppBar.tsx.
+ ▫ Implement PingButton:
+ ⁃ Use useConnection/useWallet to get connection, publicKey, and sendTransaction.
+ ⁃ Build a Transaction with a TransactionInstruction targeting the program, marking the data account as writable.
+ ⁃ Call sendTransaction(transaction, connection) and handle the signature.
+ ▫ Optional polish:
+ ⁃ Show Ping only when connected, link to the transaction on Solana Explorer, improve UX states.
+ • Challenge:
+ ▫ Build a “Send SOL” app:
+ ⁃ Connect a wallet, construct a SystemProgram.transfer instruction, and submit via sendTransaction.
+ ⁃ Wrap with the correct providers and enhance UX (e.g., Explorer link after send).
+
+================================================================================================================================================================
+Create Tokens With The Token Program
+
+Summary
+You may recall SOL is the 'native token' of Solana. All other tokens, fungible and non-fungible tokens (NFTs), are called SPL Tokens.
+The Token Program contains instructions for creating and interacting with SPL Tokens.
+Token Mints are accounts that define a specific token. This includes information about the token itself (like how many decimals it has), the account allowed to mint more tokens (called the mint authority), and where to find more information about the token like a description, image, etc. The mint authority can use the token mint to make more tokens!
+Token Accounts hold tokens of a specific Token Mint. For most users, their balances of each token mint are stored in Associated Token Accounts - accounts with addresses made from their wallet address and the token's mint.
+Creating Token Mints and Token Accounts requires allocating rent in SOL. The rent for a Token Account can be refunded when the account is closed. Additionally, tokens created with the Token Extensions Program can also close Token Mints.
+
+What This Page Teaches ￼
+ • Explains the Solana Program Library (SPL) Token Program, which manages all non-native tokens on Solana.
+ • Introduces key concepts: Token Mint, Token Accounts, Associated Token Accounts, Minting, and Transferring tokens.
+ • Shows how to use the ‎`@solana/spl-token` JavaScript library for client-side token operations.
+ • Details the process for creating a new Token Mint, including rent exemption and account initialization.
+ • Describes how to create Token Accounts and Associated Token Accounts to hold tokens.
+ • Covers minting new tokens and transferring tokens between accounts.
+ • Explains how to add metadata to tokens using Metaplex’s ‎`mpl-token-metadata` program.
+ • Provides code samples for each step, including manual transaction building for advanced use cases.
+ • Highlights best practices, such as using Associated Token Accounts for user wallets and securing mint authority.
+
+Actions the Page Asks You to Take ￼
+ • Install required libraries: ‎`@solana/web3.js`, ‎`@solana/spl-token`, ‎`@solana-developers/helpers`, and optionally ‎`@metaplex-foundation/mpl-token-metadata`.
+ • Set up your environment with a ‎`.env` file containing your ‎`SECRET_KEY`.
+ • Create a Token Mint using your wallet as the mint authority.
+ • Add metadata to your token for better visibility in Solana Explorer.
+ • Create an Associated Token Account for your wallet or another user.
+ • Mint tokens to your token account.
+ • Transfer tokens to another user’s account.
+ • Use provided code snippets and scripts to perform each action.
+
+Lab Section (Hands-On Practice) ￼
+ • Create the Token Mint: Write and run a script (‎`create-token-mint.ts`) to create a new token mint.
+ • Add Token Metadata: Use Metaplex’s program to add a name, symbol, and URI to your token (‎`create-token-metadata.ts`).
+ • Create an Associated Token Account: Script (‎`create-token-account.ts`) to create a token account for yourself or another wallet.
+ • Mint Tokens: Script (‎`mint-tokens.ts`) to mint tokens to your token account.
+ • Transfer Tokens: Script (‎`transfer-tokens.ts`) to send tokens to another user.
+ • Challenge: Build a frontend app that lets users create a mint, create a token account, and mint tokens, using wallet adapter for transaction approval.
+
+This page is a practical guide for beginners to start developing with Solana tokens, providing both conceptual explanations and step-by-step coding labs.
+
+================================================================================================================================================================
+Token Burning and Delegation
+
+This page explains advanced Solana token operations—burning, delegation, and revoking delegates—and provides a hands-on lab to practice them.
+
+What This Page Teaches
+ • How to burn tokens using the ‎⁠burn()⁠ function, which permanently removes tokens from circulation.
+ • How to approve a delegate using the ‎⁠approve()⁠ function, allowing another account to transfer or burn tokens on your behalf, up to a set limit.
+ • How to revoke a delegate using the ‎⁠revoke()⁠ function, removing the delegate’s authority from your token account.
+ • The underlying mechanics of these functions, including the use of Solana’s SPL Token library and the creation of transactions with specific instructions.
+ • The importance of using the correct arguments (connection, payer, account, mint, owner, amount) for each function.
+
+Actions the Page Asks You to Take
+ • Learn and understand the code examples for burning, approving, and revoking tokens.
+ • Replace placeholder values (like ‎⁠YOUR_TOKEN_MINT_ADDRESS_HERE⁠) with your actual token mint address.
+ • Run the provided scripts using your Solana Devnet account and keypair.
+ • Use Solana Explorer to verify your transactions.
+
+Lab Section (Hands-On Practice)
+
+The lab is clearly separated and guides you through three practical exercises:
+
+1. Delegating Tokens
+ • Create a ‎⁠delegate-tokens.ts⁠ script.
+ • Use the ‎⁠approve()⁠ function to authorize a delegate (e.g., System Program ID or another address) to transfer or burn up to 50 tokens from your account.
+ • Run the script and verify the transaction on Solana Explorer.
+
+2. Revoking Delegate
+ • Create a ‎⁠revoke-approve-tokens.ts⁠ script.
+ • Use the ‎⁠revoke()⁠ function to remove the delegate’s authority from your token account.
+ • Run the script and check the transaction on Solana Explorer.
+
+3. Burning Tokens
+ • Create a ‎⁠burn-tokens.ts⁠ script.
+ • Use the ‎⁠burn()⁠ function to destroy 5 tokens from your account.
+ • Run the script and confirm the burn transaction on Solana Explorer.
+
+For someone starting out with Solana development:
+ • This page is a practical guide to advanced token management.
+ • It provides step-by-step code samples and clear instructions for real-world token operations.
+ • The lab helps you gain hands-on experience with key Solana token program features.
+================================================================================================================================================================
+Create Solana NFTs With Metaplex
+
+This page teaches how to create, update, and verify Solana NFTs using Metaplex and Umi.
+
+What the Page Teaches
+ • Explains the basics of NFTs on Solana, including their structure and metadata.
+ • Introduces the Metaplex Token Metadata program for managing NFT metadata.
+ • Describes the difference between onchain and offchain metadata, and how assets (like images) are stored.
+ • Shows how to use the Umi framework to interact with Solana programs, especially for NFTs.
+ • Details the process of preparing, uploading, and linking assets and metadata to NFTs.
+ • Covers creating NFTs, updating their metadata, and associating them with collections.
+ • Explains how to verify NFTs as part of a certified collection for marketplace compatibility.
+
+Actions the Page Asks You to Take
+ • Install required npm packages for Solana, Metaplex, and Umi development.
+ • Set up a Solana devnet connection and load your wallet keypair.
+ • Prepare and upload image assets for your NFT or collection.
+ • Upload offchain JSON metadata describing your NFT.
+ • Create a collection NFT and individual NFTs, linking them together.
+ • Verify NFTs as part of a collection using the Metaplex SDK.
+ • Update NFT metadata if needed, including images and descriptions.
+ • Use Solana Explorer to inspect your created and updated NFTs.
+
+For Someone Starting Out in Solana Development
+ • Learn the basics of Solana NFTs and how they differ from regular tokens.
+ • Get familiar with the Metaplex ecosystem and its tools for NFT creation.
+ • Practice using Umi and Metaplex libraries to interact with Solana.
+ • Understand the workflow: asset preparation, metadata upload, NFT minting, collection association, and verification.
+ • Follow step-by-step code examples to create and manage NFTs on Solana devnet.
+
+Lab Section (Kept Separate)
+ • The lab guides you through:
+ ▫ Setting up your development environment and installing dependencies.
+ ▫ Creating a collection NFT with image and metadata.
+ ▫ Minting an NFT inside the collection and verifying its membership.
+ ▫ Updating NFT metadata after creation.
+ ▫ Running scripts to automate these steps and inspecting results on Solana Explorer.
+ • Encourages you to try a “fair launch” platform (like Metaplex, MagicEden, or Tensor) to mint and sell multiple NFTs efficiently.
+
+This page is a practical, beginner-friendly guide for building and managing NFTs on Solana using Metaplex and Umi.
+
+================================================================================================================================================================
+Create Solana NFTs With Metaplex Core
+
+This page teaches how to create, update, and manage Solana NFTs using Metaplex Core and Umi.
+
+What the Page Teaches
+ • Explains the evolution of NFTs on Solana, moving from SPL tokens with metadata accounts to the new Metaplex Core Program.
+ • Introduces the Metaplex Core Program as a protocol-level standard for NFTs, offering a single account model and plugin system for custom asset behaviors.
+ • Describes Umi, a framework for interacting with Metaplex programs using JavaScript/TypeScript.
+ • Details how to set up Umi, load keypairs, and connect to Solana devnet.
+ • Shows how to upload images and metadata for NFTs using the Irys uploader.
+ • Explains creating and updating NFT collections and assets with the ‎⁠mpl-core⁠ SDK.
+ • Covers how to update NFT metadata and make assets immutable.
+ • Mentions the importance of following the standard JSON schema for compatibility.
+
+Actions the Page Asks You to Take
+ • Install required dependencies for Solana and Metaplex development.
+ • Set up a new project folder and create TypeScript files for collection and asset creation.
+ • Generate and load a Solana keypair for signing transactions.
+ • Connect to Solana devnet and airdrop SOL if needed.
+ • Upload images and metadata to a storage provider (Irys).
+ • Create a Core Collection and Core Asset using the provided SDK methods.
+ • Add assets to collections and update their metadata.
+ • Run scripts using esrun for top-level await support.
+ • Inspect your created NFTs and collections on Solana Explorer.
+
+Lab Section (For Beginners)
+
+Lab Steps:
+ • Create a new folder and install all necessary npm packages for Solana and Metaplex development.
+ • Write and run a script (‎⁠create-metaplex-core-collection.ts⁠) to:
+ ▫ Connect to Solana devnet.
+ ▫ Load your keypair and airdrop SOL.
+ ▫ Upload a collection image and metadata.
+ ▫ Create a Core Collection and print its address.
+ • Write and run a script (‎⁠create-metaplex-core-asset.ts⁠) to:
+ ▫ Upload an asset image and metadata.
+ ▫ Create a Core Asset and add it to your collection.
+ ▫ Print the asset address.
+ • Write and run a script (‎⁠update-metaplex-core-asset.ts⁠) to:
+ ▫ Upload new asset metadata.
+ ▫ Update the asset’s name and metadata URI.
+ ▫ Print the updated asset address.
+ • Inspect your collection and assets on Solana Explorer.
+
+For Someone Starting Out with Solana Development
+ • Follow the step-by-step instructions to set up your environment and interact with Solana NFTs using Metaplex Core.
+ • Learn how to manage NFT collections and assets programmatically.
+ • Understand the workflow for uploading images, metadata, and updating NFTs.
+ • Use the lab as a hands-on guide to practice creating and updating NFTs on Solana.
+
+Lab is clearly separated above for easy reference.
+================================================================================================================================================================
+
+
+----- Onchain program development
+
+This page introduces the basics of Solana onchain development, focusing on key concepts and recommended tools.
+
+Summary of the Page
+ • Solana onchain programs (smart contracts) run directly on the Solana blockchain.
+ • Programs are made up of instruction handlers, which process instructions from transactions.
+ • Programs interact with Solana accounts to read and write data.
+ • Most Solana programs are written in Rust using the Anchor framework, which simplifies development.
+ • Anchor generates Interface Description Language (IDL) files to describe program structure and enable automatic client library creation.
+ • Solana’s architecture allows for parallel execution of non-overlapping transactions, making it fast and efficient.
+ • Accounts on Solana must maintain a minimum balance (rent) to remain active.
+ • Solana operates on different clusters: mainnet-beta (production), testnet (feature testing), devnet (app development), and localnet (local testing).
+ • Programs are deployed at unique addresses (program IDs).
+ • Instruction handlers write state to Solana accounts, similar to HTTP route handlers but without returning data.
+ • Data is stored in Program Derived Addresses (PDAs), which act as a key-value store for program-specific data.
+ • PDAs are deterministic, unique, and flexible for storing various data structures.
+ • Solana instructions must specify all accounts they will use, including PDAs, which can be calculated in front-end code.
+ • The recommended way to start onchain development is with the Anchor framework, though native development is also possible.
+ • Solana Foundation provides examples and community support.
+
+What the Page Teaches (Bulletpoints)
+ • The structure and function of Solana onchain programs and instruction handlers.
+ • How programs interact with accounts and store state using PDAs.
+ • The benefits of using the Anchor framework for development (security, automatic routing, serialization, account validation).
+ • The importance of specifying all accounts in transactions for parallel processing.
+ • The concept of rent and maintaining account balances.
+ • The different Solana clusters and their purposes.
+ • How PDAs work as a key-value store and their properties (determinism, uniqueness, flexibility).
+ • Examples of PDA usage for various applications (exchange rates, user relationships, reviews, global config).
+
+Actions for Someone Starting Out with Solana Development
+ • Start with the Anchor framework: It is recommended for beginners due to its safety and ease of use.
+ • Set up your computer for development: Follow the provided setup instructions to prepare your environment for Solana and Anchor.
+ • Understand Solana clusters: Choose the appropriate cluster (devnet for development, localnet for local testing) for your project.
+ • Learn about program deployment: Know how to generate and manage program addresses (program IDs) and keypairs.
+ • Familiarize yourself with instruction handlers: Understand how to process instructions and write state to accounts.
+ • Work with PDAs: Learn how to generate PDAs using seeds and bumps, and how to store and retrieve data from them.
+ • Specify all accounts in transactions: Ensure your front-end code calculates and includes all necessary account addresses for each transaction.
+ • Explore Solana Foundation resources: Use provided examples and community support (Stack Exchange, documentation) to deepen your understanding.
+
+Lab Section
+ • The lab or hands-on part is referenced as the next step: “set up your computer (url://25)” for local program development.
+ • This section is separate from the conceptual overview and guides you through preparing your development environment for Solana and Anchor.
+ • It is intended as a practical starting point after understanding the basics.
+
+If you need more details on any step or concept, let me know!
+
+================================================================================================================================================================
+Into to anchor development
+
+This page introduces Anchor, a framework for building Solana programs, and guides beginners through writing, deploying, and testing a simple counter program.
+
+What This Page Teaches (Bullet Points)
+ • Solana Programs: Solana programs (smart contracts) are the foundation of the Solana ecosystem, powering exchanges, lending apps, auctions, and more.
+ • Anchor Framework: Anchor simplifies Solana program development by reducing boilerplate, enforcing security checks, and organizing code using Rust macros and traits.
+ • Key Anchor Concepts:
+ ▫ ‎⁠declare_id!⁠: Sets the program’s onchain address.
+ ▫ ‎⁠#[program]⁠: Marks the module containing instruction handlers (business logic).
+ ▫ ‎⁠Accounts⁠ trait: Structures and validates the accounts required for each instruction.
+ ▫ ‎⁠#[account]⁠: Defines custom account types and enables serialization, deserialization, and ownership checks.
+ • Instruction Handlers: Functions inside the ‎⁠#[program]⁠ module that implement program logic, each taking a ‎⁠Context⁠ parameter specifying required accounts.
+ • Account Validation: Anchor provides types like ‎⁠Account⁠, ‎⁠Signer⁠, and ‎⁠Program⁠ to validate account ownership, signatures, and program identity.
+ • Account Constraints: Use the ‎⁠#[account(...)]⁠ attribute to specify constraints (e.g., initialization, payer, space, mutability) on accounts.
+ • Putting It All Together: Example code demonstrates a complete Anchor program that initializes a counter account and increments its value.
+ • Testing: Shows how to write and run tests for your Anchor program using Mocha and the Anchor testing framework.
+
+Actions the Page Asks You to Take (Step-by-Step for Beginners)
+ 1. Install Anchor: Ensure you have Anchor installed (see the local setup lesson).
+ 2. Create a New Project:
+ ▫ Run ‎⁠anchor init anchor-counter⁠ to create a new project.
+ ▫ Change into the project directory and build it with ‎⁠anchor build⁠.
+ 3. Sync Program ID:
+ ▫ Check and update the ‎⁠declare_id!⁠ in ‎⁠lib.rs⁠ and ‎⁠Anchor.toml⁠ using ‎⁠anchor keys sync⁠.
+ 4. Clean Up Starter Code:
+ ▫ Remove default code in ‎⁠lib.rs⁠ to start fresh.
+ 5. Define Account Structure:
+ ▫ Use ‎⁠#[account]⁠ and ‎⁠#[derive(InitSpace)]⁠ to define a ‎⁠Counter⁠ struct with a ‎⁠count⁠ field.
+ 6. Set Up Account Validation:
+ ▫ Use ‎⁠#[derive(Accounts)]⁠ to define structs (‎⁠Initialize⁠, ‎⁠Update⁠) that specify which accounts are needed for each instruction.
+ 7. Write Instruction Handlers:
+ ▫ Implement ‎⁠initialize⁠ (sets count to 0) and ‎⁠increment⁠ (adds 1 to count) functions inside the ‎⁠#[program]⁠ module.
+ 8. Build the Program:
+ ▫ Run ‎⁠anchor build⁠ to compile your program.
+ 9. Write and Run Tests:
+ ▫ Use the provided JavaScript test code to test initialization and increment instructions.
+ ▫ Run ‎⁠anchor test⁠ to deploy your program locally and execute the tests.
+ 10. Explore Further:
+ ▫ Reference the Anchor Book and Rust Book for deeper learning.
+
+Lab Section (Clearly Separated)
+
+Lab: Build a Counter Program
+
+Objective:
+ • Write a new Solana program that initializes a ‎⁠counter⁠ account.
+ • Implement both ‎⁠increment⁠ and ‎⁠decrement⁠ instructions.
+ • Build and deploy your program.
+ • Test your program and use Solana Explorer to check logs.
+
+Instructions:
+ 1. Write the Program:
+ ▫ Create a new Anchor program similar to the example, but add a ‎⁠decrement⁠ instruction alongside ‎⁠increment⁠.
+ 2. Build and Deploy:
+ ▫ Use ‎⁠anchor build⁠ and ‎⁠anchor deploy⁠ to compile and deploy your program.
+ 3. Test the Program:
+ ▫ Write tests for both increment and decrement instructions.
+ ▫ Run ‎⁠anchor test⁠ to verify functionality.
+ 4. Check on Solana Explorer:
+ ▫ Use Solana Explorer to view your program’s logs and confirm transactions.
+
+Tip:
+Try to write the code from scratch without copying. If you get stuck, reference the provided solution code.
+
+This page is a practical starting point for anyone new to Solana development, guiding you through the basics of Anchor and hands-on program creation.
+
+================================================================================================================================================================
+Intro to client-side Anchor development
+
+This page introduces how to use Anchor’s Typescript library to interact with Solana programs from a frontend, guiding beginners through setup, usage, and a hands-on lab.
+
+
+
+What This Page Teaches
+ • Anchor and IDL: Anchor simplifies Solana program interaction by generating an Interface Description Language (IDL) file, which describes the program’s structure and instructions.
+ • Typescript Client: Using the ‎⁠@coral-xyz/anchor⁠ Typescript library, you can easily build instructions and transactions for Solana programs.
+ • Key Components:
+ ▫ IDL: JSON file describing the program’s instructions, accounts, and types.
+ ▫ Connection: Connects to a Solana cluster (devnet, mainnet, etc.).
+ ▫ Wallet: Used to sign and pay for transactions.
+ ▫ Provider: Combines the connection and wallet, enabling transaction sending.
+ ▫ Program: Main object for interacting with a specific Solana program using the IDL and provider.
+ • Setting Up:
+ ▫ Import the IDL and types into your project.
+ ▫ Use hooks like ‎⁠useConnection⁠ and ‎⁠useAnchorWallet⁠ to get the connection and wallet.
+ ▫ Create a ‎⁠Provider⁠ and set it as default.
+ ▫ Instantiate the ‎⁠Program⁠ object with the IDL and provider.
+ • MethodsBuilder: Use the builder pattern to construct and send transactions or build instructions using the program’s API.
+ • Fetching Accounts: Easily fetch all or specific program accounts using the ‎⁠program.account⁠ API, with optional filters.
+
+Actions the Page Asks You to Take (Step-by-Step)
+ 1. Set Up Your Project:
+ ▫ Download starter code for a Next.js app.
+ ▫ Install dependencies (‎⁠npm install⁠) and run the app (‎⁠npm run dev⁠).
+ 2. Create the Program Instance:
+ ▫ Use a helper function to get the ‎⁠Program⁠ instance with the provider.
+ 3. Initialize a Counter Account:
+ ▫ Use a mutation to call the ‎⁠initialize⁠ instruction.
+ ▫ Generate a new ‎⁠Keypair⁠ for the counter account.
+ ▫ Pass the keypair’s public key to the instruction and add the keypair as a signer.
+ 4. Fetch All Counter Accounts:
+ ▫ Use a query to fetch all ‎⁠counter⁠ accounts with ‎⁠program.account.counter.all()⁠.
+ 5. Increment the Counter:
+ ▫ Use a mutation to call the ‎⁠increment⁠ instruction, passing the counter account.
+ ▫ Refetch the account data after incrementing.
+ 6. Fetch a Specific Counter Account:
+ ▫ Use a query to fetch a specific counter account by address.
+ 7. Test the Frontend:
+ ▫ Connect your wallet.
+ ▫ Create a counter account and approve the transaction.
+ ▫ Increment the counter and approve the transaction.
+ ▫ Observe updates and transaction logs.
+
+Lab Section (Clearly Separated)
+
+Lab: Build a Frontend for the Counter Program
+ • Goal: Practice building a frontend that interacts with a Solana program using Anchor.
+ • Instructions:
+ a. Download and explore the provided starter code.
+ b. Complete the ‎⁠useCounterProgram⁠ hook to create a ‎⁠Program⁠ instance.
+ c. Implement the ‎⁠initialize⁠ mutation to create new counter accounts.
+ d. Set up queries to fetch all counter accounts.
+ e. Implement the ‎⁠increment⁠ mutation and fetch logic for individual accounts.
+ f. Test the app by creating and incrementing counters via the UI.
+ • Challenge:
+ ▫ Extend the program by adding a ‎⁠decrement⁠ instruction:
+ i. Build and deploy a new program with a ‎⁠decrement⁠ instruction.
+ ii. Update the frontend’s IDL and program ID.
+ iii. Add a button/component to decrement the counter.
+ ▫ Reference solution code if needed.
+
+This page is a practical guide for beginners to set up, interact with, and extend Solana programs using Anchor and Typescript, with a hands-on lab to reinforce learning.
+================================================================================================================================================================
