@@ -630,3 +630,59 @@ Lab: Build a Frontend for the Counter Program
 
 This page is a practical guide for beginners to set up, interact with, and extend Solana programs using Anchor and Typescript, with a hands-on lab to reinforce learning.
 ================================================================================================================================================================
+Anchor PDAs and Accounts
+
+Summary of the Page
+
+This page is a hands-on guide for building an on-chain movie review program on Solana using Anchor. It covers how to define account structures, handle custom errors, implement instructions for adding, updating, and deleting reviews, and how to test your program. The content is aimed at developers new to Solana and Anchor, providing step-by-step explanations and code samples.
+
+Key Concepts Taught (Bulletpoints)
+ • Defining Account Structures:
+How to use the ‎⁠#[account]⁠ macro to create a custom account (‎⁠MovieAccountState⁠) for storing movie reviews, including fields for reviewer, rating, title, and description.
+ • Space Calculation:
+Using ‎⁠#[derive(InitSpace)]⁠ and ‎⁠#[max_len]⁠ to automatically calculate and allocate the required space for accounts, especially for dynamic fields like strings.
+ • Custom Error Handling:
+Creating custom error codes with the ‎⁠#[error_code]⁠ macro to provide meaningful error messages for invalid input (e.g., rating out of bounds, title/description too long).
+ • Instruction Implementation:
+Writing instructions (‎⁠add_movie_review⁠, ‎⁠update_movie_review⁠, ‎⁠delete_movie_review⁠) to add, update, and delete movie reviews, including input validation using the ‎⁠require!⁠ macro.
+ • Account Constraints and PDAs:
+Using Anchor macros to specify account constraints, initialize PDAs (Program Derived Addresses) with seeds, and handle account space and payer logic.
+ • Testing with Anchor:
+Setting up and writing tests in TypeScript to verify that instructions work as expected, including adding, updating, and deleting reviews.
+
+Actions to Take (Detailed Steps for Beginners)
+ 1. Define the Movie Review Account:
+ ▫ Use the provided Rust code to create a ‎⁠MovieAccountState⁠ struct with fields for reviewer, rating, title, and description.
+ ▫ Apply ‎⁠#[max_len]⁠ to string fields to set maximum lengths.
+ 2. Implement Custom Errors:
+ ▫ Create an enum with the ‎⁠#[error_code]⁠ macro to define errors for invalid ratings and overly long titles/descriptions.
+ 3. Write Instructions:
+ ▫ Implement the ‎⁠add_movie_review⁠ instruction to create new reviews, validating input and populating the account.
+ ▫ Implement the ‎⁠update_movie_review⁠ instruction to modify existing reviews, reallocating space if needed.
+ ▫ Implement the ‎⁠delete_movie_review⁠ instruction to close and refund the account.
+ 4. Set Up Account Constraints:
+ ▫ Use Anchor macros in your context structs (‎⁠AddMovieReview⁠, ‎⁠UpdateMovieReview⁠, ‎⁠DeleteMovieReview⁠) to specify how accounts are initialized, validated, and closed.
+ ▫ For PDAs, use seeds based on the movie title and reviewer’s public key.
+ 5. Write and Run Tests:
+ ▫ Use the provided TypeScript test code to verify your instructions.
+ ▫ Make sure to configure Anchor to infer seeds and accounts.
+ ▫ Run ‎⁠anchor test⁠ to check that all tests pass.
+ 6. Review Solution Code (Optional):
+ ▫ If you need more help, check the provided solution code for reference.
+
+Lab Section (Kept Separate)
+
+The lab guides you through implementing and testing the movie review program:
+ • Lab Steps:
+ ▫ Create the ‎⁠MovieAccountState⁠ struct and set up account space.
+ ▫ Define custom error codes for input validation.
+ ▫ Implement the three main instructions: add, update, and delete movie reviews.
+ ▫ Set up account constraints and PDAs in your context structs.
+ ▫ Write TypeScript tests for each instruction.
+ ▫ Run the tests using ‎⁠anchor test⁠ and verify the output.
+ • Expected Output:
+ ▫ All tests should pass, confirming your program works as intended.
+
+This lab is designed to give you practical experience with Solana development using Anchor, focusing on account management, error handling, and testing.
+
+================================================================================================================================================================
