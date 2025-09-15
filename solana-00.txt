@@ -686,3 +686,77 @@ The lab guides you through implementing and testing the movie review program:
 This lab is designed to give you practical experience with Solana development using Anchor, focusing on account management, error handling, and testing.
 
 ================================================================================================================================================================
+
+Anchor CPIs and Errors
+
+This page teaches how to use Anchor for Cross Program Invocations (CPIs) and custom errors in Solana development.
+
+Summary of the Page
+
+This lesson explains how to use Anchor, a framework for Solana smart contract development, to make Cross Program Invocations (CPIs) and handle custom errors. It covers:
+ • How Anchor simplifies calling other Solana programs, especially if they are also written in Anchor.
+ • The use of ‎⁠CpiContext⁠ for organizing account data and signer seeds when making CPIs.
+ • How to invoke instructions on both Anchor and non-Anchor programs.
+ • How to define and throw custom errors in Anchor programs for better debugging and user feedback.
+
+Key Concepts Taught (Bulletpoints)
+ • Cross Program Invocations (CPIs):
+ ▫ Allows your Solana program to call instructions in other programs, enabling composability.
+ ▫ Anchor provides a simplified way to do CPIs using ‎⁠CpiContext⁠, instead of manually using ‎⁠invoke⁠ or ‎⁠invoke_signed⁠.
+ • CpiContext Structure:
+ ▫ Organizes required accounts, remaining accounts, program ID, and signer seeds for CPIs.
+ ▫ Can be constructed with or without signer seeds, depending on whether a PDA is signing.
+ • Accounts for CPI:
+ ▫ Uses generic structs with the ‎⁠#[derive(Accounts)]⁠ macro for type safety and organization.
+ • Invoking Other Programs:
+ ▫ For Anchor programs: Add as a dependency with ‎⁠features = ["cpi"]⁠ in ‎⁠Cargo.toml⁠ and use the generated CPI helper functions.
+ ▫ For non-Anchor programs: Use published helper crates (like ‎⁠anchor_spl⁠ for SPL Token) or fall back to manual ‎⁠invoke⁠/‎⁠invoke_signed⁠.
+ • Custom Errors in Anchor:
+ ▫ Use the ‎⁠error_code⁠ attribute to define custom error enums.
+ ▫ Use macros like ‎⁠err!⁠, ‎⁠error!⁠, or ‎⁠require!⁠ to throw errors with helpful messages and debugging info.
+
+Actions to Take (For Someone Starting Out with Solana Dev)
+ 1. Learn Anchor Basics:
+ ▫ Understand how Anchor structures programs and handles accounts.
+ ▫ Familiarize yourself with the ‎⁠Context⁠ and ‎⁠CpiContext⁠ types.
+ 2. Practice CPIs:
+ ▫ Try calling instructions from other programs using Anchor’s CPI helpers.
+ ▫ Add dependencies in your ‎⁠Cargo.toml⁠ with the ‎⁠cpi⁠ feature for Anchor programs.
+ ▫ For non-Anchor programs, use helper crates or manual invocation.
+ 3. Implement Custom Errors:
+ ▫ Define custom error enums with the ‎⁠error_code⁠ attribute.
+ ▫ Use error macros to provide clear feedback and debugging info in your programs.
+ 4. Explore Anchor SPL:
+ ▫ Use the ‎⁠anchor_spl⁠ crate to interact with the SPL Token program and other common Solana programs.
+ 5. Test Your Programs:
+ ▫ Write tests using Anchor’s TypeScript/Javascript client.
+ ▫ Use SPL Token helpers to check token balances and associated token accounts.
+
+Lab Section (Kept Separate)
+
+Lab: Mint Tokens on Movie Review Submission
+ • Objective:
+Update the Movie Review program to mint tokens to users when they submit a new review.
+ • Steps:
+ a. Install SPL Token helpers:
+Run ‎⁠npm install @solana/spl-token --save-dev⁠.
+ b. Add a test for initializing the reward token mint.
+ c. Update the test for adding a movie review:
+ ⁃ Get the associated token address for the user.
+ ⁃ Pass the token account into the instruction.
+ ⁃ Check that the user receives 10 tokens after submitting a review.
+ d. Run your tests with ‎⁠anchor test⁠ and verify all pass.
+ • What You Learn:
+ ▫ How to use CPIs to mint tokens as a reward for user actions.
+ ▫ How to write and update tests for new program functionality.
+
+Getting Started Advice
+
+If you’re new to Solana development:
+ • Start by building simple Anchor programs and gradually add CPIs and custom errors.
+ • Use the lab as a hands-on exercise to reinforce concepts.
+ • Reference solution code if you get stuck, but try to implement independently first.
+ • Consider how you might add similar token-minting functionality to other programs, like a Student Intro program.
+
+This lesson is a practical guide to making your Solana programs more composable and robust using Anchor’s features.
+================================================================================================================================================================
