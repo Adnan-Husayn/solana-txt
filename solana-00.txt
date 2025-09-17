@@ -760,3 +760,75 @@ If you’re new to Solana development:
 
 This lesson is a practical guide to making your Solana programs more composable and robust using Anchor’s features.
 ================================================================================================================================================================
+
+Program Architecture
+
+This page teaches key Solana program architecture concepts, memory optimization, and concurrency strategies.
+
+Summary of the Page
+
+This Solana course page covers advanced program architecture for blockchain development, focusing on designing efficient, scalable, and future-proof programs. It explains how to manage account sizes, memory allocation, data structuring, and concurrency to avoid bottlenecks and optimize performance.
+
+Key Concepts Taught (Bulletpoints)
+ • Memory Management:
+ ▫ Use ‎⁠Box⁠ to allocate large accounts to the Heap (up to 32KB).
+ ▫ Use Zero-Copy and ‎⁠AccountLoader⁠ for very large accounts (up to 10MB), bypassing stack/heap limits.
+ ▫ Understand Solana’s rent model: pay per byte stored, optimize struct sizes, and avoid waste (e.g., use ‎⁠u8⁠ instead of ‎⁠u64⁠ for small numbers).
+ • Data Structuring:
+ ▫ Place variable-length fields at the end of account structs for easier querying and predictable memory layout.
+ ▫ Use versioning and ‎⁠Option<T>⁠ for backward compatibility and future upgrades.
+ ▫ Anchor’s ‎⁠InitSpace⁠ and ‎⁠realloc⁠ constraints help with automatic space calculation and account resizing.
+ • Bitwise Optimization:
+ ▫ Store multiple boolean flags in a single byte using bitwise operations to save space.
+ • Indexing and PDAs:
+ ▫ Use Program Derived Addresses (PDAs) with custom seeds for deterministic account addresses and relationships (e.g., one-per-owner, multiple-per-owner).
+ • Concurrency and Bottlenecks:
+ ▫ Solana processes transactions in parallel unless they write to the same account.
+ ▫ Avoid bottlenecks by designing programs so users interact with separate accounts rather than shared ones (e.g., tally donations in user PDAs, then batch transfer to a central wallet).
+ • Account Flexibility:
+ ▫ Design account structures for easy upgrades and resizing.
+ ▫ Use Anchor’s features to manage account evolution and rent-exemption.
+
+Actions the Page Asks You to Take (For Beginners)
+ • Be mindful of Solana’s resource limits:
+ ▫ Always consider account size, rent costs, and compute units when designing programs.
+ • Optimize your data structures:
+ ▫ Use the smallest possible types for fields.
+ ▫ Place variable-length fields at the end of structs.
+ ▫ Use bitwise flags for booleans.
+ • Design for scalability and future-proofing:
+ ▫ Add version fields and use ‎⁠Option<T>⁠ for new fields.
+ ▫ Use Anchor’s ‎⁠InitSpace⁠ and ‎⁠realloc⁠ for account resizing.
+ • Leverage PDAs for indexing:
+ ▫ Use seeds to create deterministic account addresses and relationships.
+ • Avoid concurrency bottlenecks:
+ ▫ Separate user data from shared accounts to maximize parallelism.
+ • Test and experiment:
+ ▫ Fork or clone the example program, run the test suite, and try modifying the code to understand the concepts.
+
+Lab Section (Kept Separate)
+
+The lab guides you through building a simple, optimized RPG game engine on Solana using the concepts above. It includes:
+ • Program Setup:
+ ▫ Scaffold a new Anchor project and sync program IDs.
+ • Account Structures:
+ ▫ Create ‎⁠Game⁠, ‎⁠Player⁠, and ‎⁠Monster⁠ accounts with optimized fields and PDAs.
+ • Ancillary Types:
+ ▫ Define config structs and bitwise status flags.
+ • Helper Functions:
+ ▫ Implement a function for spending action points (lamports).
+ • Instructions:
+ ▫ Write handlers for creating games, players, spawning monsters, attacking monsters, and redeeming action points to the treasury.
+ • Error Handling:
+ ▫ Define custom errors for game logic.
+ • Testing:
+ ▫ Set up and run tests for each instruction, ensuring the program works as intended.
+
+Action for Lab:
+ • Follow the step-by-step instructions to build, test, and optimize the RPG game engine.
+ • Experiment with the code, run tests, and try additional optimizations or features.
+ • Push your code to GitHub and share feedback with the Solana team.
+
+This page is a practical guide for new Solana developers to learn best practices in program architecture, memory management, and concurrency, with a hands-on lab to reinforce the concepts.
+
+================================================================================================================================================================
